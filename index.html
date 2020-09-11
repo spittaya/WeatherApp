@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Weather Project</title>
+        <link href="./styles.css" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Recursive&display=swap"
+        rel="stylesheet"/>
+    </head>
+    <body>
+        <main>
+            <h1>Search for a Weather Forecast</h1>
+            <h3>Current Weather Data by: <a href="API">OpenWeatherMap API</a></h3>
+            <form role="search" class="search-bar">
+                <input type="text" placeholder="Enter a city..."/>
+                <button type="submit">Submit</button>
+            </form>
+            <section id="results">
+                <!--this is going to be for our search results-->
+            </section>
+        </main>
+        <footer class="footer">
+            <span>Made with 💜 by Sirada</span>
+        </footer>
+        <script
+            src="https://code.jquery.com/jquery-3.5.1.js"
+            integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+            crossorigin="anonymous">
+        </script>
+        <script>
+            $(document).ready(function() {
+                //define displayWeatherCard to show results in section
+                const displayWeatherCard = function(results){
+                    //set an icon variable
+                    let icon = results.weather[0].icon;
+                    let iconURL = `http://openweathermap.org/img/wn/${icon}.png`;
+                    
+                    $('#results').append(
+                        //back tick format is called a template literal
+                        //can write a string but put variables inside by using the $ sign
+                        `
+                        <div class="card-deck">
+                        <div class="card-body">
+                            <img src=${iconURL} />
+                            <h4 class="card-title">City: ${results.name}</h4>
+                            <p class="card-text">Temp: ${results.main.temp}°C</p>
+                            <p class="card-text">Feels like: ${results.main.feels_like}°C</p>
+                            <p class="card-text">Description: ${results.weather[0].description}</p>
+                        </div>
+                        </div>
+                        `
+                    )
+                }
+
+                //define the getWeather function 
+                const getWeather = function(search) {
+                    console.log(search);
+                    //use the user input search to make a request 
+                    $.ajax({
+                        url: `https://api.openweathermap.org/data/2.5/weather?q=${search}&units=metric&appid=9c4923451adc2b8b916cc0ffbf983bc0`,
+                        method: "GET",
+                        dataType: "json",
+                    }).done(function (results) {
+                        displayWeatherCard(results);
+                    });
+                };
+
+                $('form').on('submit', function(event) {
+                    event.preventDefault(); //prevent refresh of page 
+
+                    let userSearch = $("input[type=text").val(); //specified input element with attribute type being TEXT
+                    //recall that form element above has the input type of TEXT with placehole "Enter a City..."
+                    
+                    //function to get Weather Data from API
+                    getWeather(userSearch) 
+
+                    //clear input bar after clicking submit
+                    $("input[type=text").val(" ");
+
+                }); //selector form action on event submit, function with parameter called event
+            })
+        </script>
+    </body>
+</html>
